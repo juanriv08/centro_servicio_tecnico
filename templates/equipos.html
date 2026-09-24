@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Inventario de Equipos{% endblock %}
+
+{% block content %}
+<!-- Encabezado de la Sección -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+  <div>
+    <h3 class="fw-bold mb-1" style="color: #0f172a;">
+      <i class="bi bi-cpu text-teal me-2" style="color: #0d9488;"></i>Inventario de Equipos Médicos
+    </h3>
+    <p class="text-muted small mb-0">Gestión de dispositivos biomédicos registrados y control de estado operativo.</p>
+  </div>
+  {% if session.rol in ['Administrador', 'Supervisor'] %}
+  <div>
+    <a href="{{ url_for('nuevo_equipo') }}" class="btn btn-primary shadow-sm d-inline-flex align-items-center gap-2">
+      <i class="bi bi-plus-lg"></i>
+      <span>Registrar Equipo</span>
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Tarjeta Principal del Contenido -->
+<div class="card border-0 shadow-sm overflow-hidden mb-4">
+  <!-- Barra Superior con Buscador Filtro -->
+  <div class="card-header bg-white border-bottom py-3 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-light text-dark border px-3 py-2 fw-medium">
+        Total: <strong class="text-primary">{{ equipos|length }}</strong> equipos
+      </span>
+    </div>
+    
+    <!-- Input de búsqueda en tiempo real -->
+    <div class="input-group style-search" style="max-width: 320px;">
+      <span class="input-group-text bg-light border-end-0 text-muted">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="text" id="tablaBuscador" class="form-control bg-light border-start-0" placeholder="Buscar por equipo, cliente, serie...">
+    </div>
+  </div>
+
+  <!-- Tabla de Equipos -->
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0" id="tablaEquipos">
+      <thead style="background-color: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+        <tr class="text-muted text-uppercase small" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+          <th class="ps-4" style="width: 70px;">ID</th>
+          <th>Nombre del Equipo</th>
+          <th>Modelo</th>
+          <th>N.° de Serie</th>
+          <th>Cliente / Ubicación</th>
+          <th>Estado Operativo</th>
+          {% if session.rol in ['Administrador', 'Supervisor'] %}
+          <th class="text-end pe-4">Acción</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in equipos %}
+        <tr>
+          <td class="ps-4 fw-bold text-muted" style="font-size: 0.85rem;">#{{ e.id }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="p-2 rounded-2 bg-light text-primary d-none d-sm-block">
+                <i class="bi bi-activity fs-5"></i>
+              </div>
+              <div>
+                <span class="fw-semibold text-dark d-block">{{ e.nombre }}</span>
+              </div>
+            </div>
+          </td>
+          <td class="text-secondary fw-medium">{{ e.modelo }}</td>
+          <td>
+            <code class="bg-light text-dark px-2 py-1 rounded border small font-monospace">{{ e.numero_serie }}</code>
+          </td>
+          <td>
+            <span class="d-flex align-items-center gap-1 text-dark">
+              <i class="bi bi-building text-muted small"></i>
+              {{ e.cliente.nombre }}
+            </span>
+          </td>
+          <td>
+            {% if e.estado == 'Operativo' %}
+              <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1">
+                <i class="bi bi-check-circle-fill me-1"></i> Operativo
+              </span>
+            {% else %}
+              <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-1">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i> Fuera de servicio
+              </span>
+            {% endif %}
+          </td>
+          {% if session.rol in ['Administrador', 'Supervisor'] %}
+          <td class="text-end pe-4">
+            <form method="POST" action="{{ url_for('cambiar_estado_equipo', equipo_id=e.id) }}" class="d-inline">
+              <button type="submit" class="btn btn-sm btn-outline-secondary border-1 rounded-3 px-3">
+                <i class="bi bi-arrow-repeat me-1"></i> Cambiar estado
+              </button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" class="text-center py-5 text-muted">
+            <div class="py-3">
+              <i class="bi bi-inbox fs-1 text-secondary opacity-50 d-block mb-2"></i>
+              <p class="mb-0 fw-medium">No se encontraron equipos médicos registrados.</p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Script en línea para filtrado interactivo en la tabla -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById('tablaBuscador');
+    const tableRows = document.querySelectorAll('#tablaEquipos tbody tr');
+
+    if (searchInput) {
+      searchInput.addEventListener('keyup', function() {
+        const value = this.value.toLowerCase().trim();
+
+        tableRows.forEach(row => {
+          // Si es la fila de "No se encontraron equipos", se salta
+          if (row.children.length === 1) return;
+
+          const text = row.textContent.toLowerCase();
+          if (text.includes(value)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,108 @@
+:root {
+            --bg-main: #f8fafc;
+            --primary-blue: #0f172a;
+            --accent-teal: #0d9488;
+            --text-muted: #64748b;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar elegante con gradiente */
+        .navbar-custom {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 0.8rem 1.5rem;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            font-size: 1.2rem;
+            color: #ffffff !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            font-size: 0.92rem;
+            color: #cbd5e1 !important;
+            padding: 0.5rem 0.9rem !important;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Modificación de Tarjetas y KPIs */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: #ffffff;
+        }
+
+        .card:hover {
+            box-shadow: var(--card-hover-shadow);
+            transform: translateY(-2px);
+        }
+
+        .card-kpi {
+            border-left: 4px solid var(--accent-teal);
+        }
+
+        /* Estilizado para badges / estados */
+        .badge {
+            font-weight: 600;
+            padding: 0.45em 0.75em;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-estado-Generada { background-color: #64748b; color: #fff; }
+        .badge-estado-Asignada { background-color: #2563eb; color: #fff; }
+        .badge-estado-Completada { background-color: #d97706; color: #fff; }
+        .badge-estado-Cerrada { background-color: #10b981; color: #fff; }
+
+        /* Botones personalizados */
+        .btn-primary {
+            background-color: #0d9488;
+            border-color: #0d9488;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 0.5rem 1.25rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #0f766e;
+            border-color: #0f766e;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+        }
+
+        /* Usuario Badge Navbar */
+        .user-badge {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }

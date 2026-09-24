@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Usuarios{% endblock %}
+{% block content %}
+<h3 class="mb-4">Usuarios del Sistema</h3>
+<table class="table table-striped bg-white shadow-sm">
+  <thead><tr><th>#</th><th>Nombre completo</th><th>Usuario</th><th>Rol</th></tr></thead>
+  <tbody>
+    {% for u in usuarios %}
+    <tr>
+      <td>{{ u.id }}</td>
+      <td>{{ u.nombre_completo }}</td>
+      <td>{{ u.username }}</td>
+      <td><span class="badge bg-secondary">{{ u.rol }}</span></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}Órdenes de Servicio{% endblock %}
+
+{% block content %}
+<!-- Encabezado de la Sección -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+  <div>
+    <h3 class="fw-bold mb-1" style="color: #0f172a;">
+      <i class="bi bi-clipboard-check text-primary me-2"></i>Órdenes de Servicio Técnico
+    </h3>
+    <p class="text-muted small mb-0">Gestión del ciclo de vida de mantenimiento, asignación técnica y cierre de diagnósticos.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('nueva_orden') }}" class="btn btn-success shadow-sm d-inline-flex align-items-center gap-2" style="background-color: #10b981; border-color: #10b981;">
+      <i class="bi bi-file-earmark-plus"></i>
+      <span>Nueva Orden de Servicio</span>
+    </a>
+  </div>
+</div>
+
+<!-- Tarjeta Principal del Contenido -->
+<div class="card border-0 shadow-sm overflow-hidden mb-4">
+  <!-- Barra Superior con Buscador Filtro -->
+  <div class="card-header bg-white border-bottom py-3 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-light text-dark border px-3 py-2 fw-medium">
+        Total: <strong class="text-primary">{{ ordenes|length }}</strong> órdenes de servicio
+      </span>
+    </div>
+    
+    <!-- Input de búsqueda en tiempo real -->
+    <div class="input-group style-search" style="max-width: 320px;">
+      <span class="input-group-text bg-light border-end-0 text-muted">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="text" id="tablaBuscadorOrdenes" class="form-control bg-light border-start-0" placeholder="Buscar por equipo, técnico, cliente...">
+    </div>
+  </div>
+
+  <!-- Tabla de Órdenes -->
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0" id="tablaOrdenes">
+      <thead style="background-color: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+        <tr class="text-muted text-uppercase small" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+          <th class="ps-4" style="width: 70px;">N.°</th>
+          <th>Equipo Médico</th>
+          <th>Cliente / Centro</th>
+          <th>Técnico Asignado</th>
+          <th>Estado</th>
+          <th>Diagnóstico Técnico</th>
+          <th class="text-end pe-4" style="min-width: 240px;">Gestión / Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in ordenes %}
+        <tr>
+          <!-- Número de Orden -->
+          <td class="ps-4 fw-bold text-muted" style="font-size: 0.85rem;">#{{ o.id }}</td>
+          
+          <!-- Nombre del Equipo -->
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="p-2 rounded-2 bg-light text-primary d-none d-sm-block">
+                <i class="bi bi-tools fs-6"></i>
+              </div>
+              <span class="fw-semibold text-dark">{{ o.equipo.nombre }}</span>
+            </div>
+          </td>
+
+          <!-- Cliente -->
+          <td class="text-secondary fw-medium">
+            <span class="d-flex align-items-center gap-1 text-dark">
+              <i class="bi bi-building text-muted small"></i>
+              {{ o.equipo.cliente.nombre }}
+            </span>
+          </td>
+
+          <!-- Técnico -->
+          <td>
+            {% if o.tecnico %}
+              <span class="badge bg-light text-dark border font-monospace">
+                <i class="bi bi-person-badge me-1 text-primary"></i> {{ o.tecnico.nombre_completo }}
+              </span>
+            {% else %}
+              <span class="text-muted small"><i class="bi bi-dash-lg"></i> Sin asignar</span>
+            {% endif %}
+          </td>
+
+          <!-- Estado -->
+          <td>
+            {% if o.estado == 'Generada' %}
+              <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3 py-1">
+                <i class="bi bi-file-earmark-text me-1"></i> Generada
+              </span>
+            {% elif o.estado == 'Asignada' %}
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1">
+                <i class="bi bi-gear-wide-connected me-1"></i> Asignada
+              </span>
+            {% elif o.estado == 'Completada' %}
+              <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill px-3 py-1">
+                <i class="bi bi-clock-check me-1"></i> Completada
+              </span>
+            {% else %}
+              <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1">
+                <i class="bi bi-check-circle-fill me-1"></i> Cerrada
+              </span>
+            {% endif %}
+          </td>
+
+          <!-- Diagnóstico -->
+          <td>
+            {% if o.diagnostico %}
+              <span class="small text-dark d-inline-block text-truncate" style="max-width: 200px;" title="{{ o.diagnostico }}">
+                {{ o.diagnostico }}
+              </span>
+            {% else %}
+              <span class="text-muted small">Pendiente de evaluación</span>
+            {% endif %}
+          </td>
+
+          <!-- Formulario / Botones de Acción -->
+          <td class="text-end pe-4">
+            {% if o.estado == "Generada" %}
+              <form method="POST" action="{{ url_for('avanzar_orden', orden_id=o.id) }}" class="d-flex gap-2 justify-content-end align-items-center">
+                <input type="hidden" name="nuevo_estado" value="Asignada">
+                <input type="text" name="diagnostico" class="form-control form-control-sm bg-light" placeholder="Diagnóstico preliminar" required style="max-width: 160px;">
+                <button class="btn btn-sm btn-primary px-3 rounded-2 fw-medium d-inline-flex align-items-center gap-1">
+                  <i class="bi bi-person-plus"></i> Asignar
+                </button>
+              </form>
+            {% elif o.estado == "Asignada" %}
+              <form method="POST" action="{{ url_for('avanzar_orden', orden_id=o.id) }}" class="d-inline">
+                <input type="hidden" name="nuevo_estado" value="Completada">
+                <button class="btn btn-sm btn-warning text-dark px-3 rounded-2 fw-medium d-inline-flex align-items-center gap-1">
+                  <i class="bi bi-check2-square"></i> Completar
+                </button>
+              </form>
+            {% elif o.estado == "Completada" %}
+              <form method="POST" action="{{ url_for('avanzar_orden', orden_id=o.id) }}" class="d-inline">
+                <input type="hidden" name="nuevo_estado" value="Cerrada">
+                <button class="btn btn-sm btn-success px-3 rounded-2 fw-medium d-inline-flex align-items-center gap-1">
+                  <i class="bi bi-shield-check"></i> Verificar y Cerrar
+                </button>
+              </form>
+            {% else %}
+              <span class="badge bg-light text-muted border px-2 py-1 small">
+                <i class="bi bi-lock me-1"></i> Finalizada {{ o.fecha_cierre.strftime('%d/%m/%Y') if o.fecha_cierre else "" }}
+              </span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" class="text-center py-5 text-muted">
+            <div class="py-3">
+              <i class="bi bi-clipboard-x fs-1 text-secondary opacity-50 d-block mb-2"></i>
+              <p class="mb-0 fw-medium">No hay órdenes de servicio técnico registradas.</p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Script para filtro de búsqueda en vivo -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById('tablaBuscadorOrdenes');
+    const tableRows = document.querySelectorAll('#tablaOrdenes tbody tr');
+
+    if (searchInput) {
+      searchInput.addEventListener('keyup', function() {
+        const value = this.value.toLowerCase().trim();
+
+        tableRows.forEach(row => {
+          if (row.children.length === 1) return; // Omitir mensaje vacío
+
+          const text = row.textContent.toLowerCase();
+          if (text.includes(value)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+  });
+</script>
+{% endblock %}

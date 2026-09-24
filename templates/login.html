@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión — Centro de Servicio Técnico</title>
+    
+    <!-- CSS Bootstrap y Fuentes -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Iconos de Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1.5rem;
+        }
+
+        .login-card {
+            max-width: 440px;
+            width: 100%;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .login-header {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 2rem 2rem 1.5rem 2rem;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background-color: #0d9488;
+            color: #ffffff;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.3);
+        }
+
+        .btn-login {
+            background-color: #0f172a;
+            border-color: #0f172a;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-login:hover {
+            background-color: #1e293b;
+            border-color: #1e293b;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .demo-credentials {
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card login-card">
+    <!-- Encabezado de la Tarjeta -->
+    <div class="login-header text-center">
+        <div class="brand-icon mb-3">
+            <i class="bi bi-hospital fs-3"></i>
+        </div>
+        <h4 class="fw-bold mb-1" style="color: #0f172a;">Centro de Servicio Técnico</h4>
+        <p class="text-muted small mb-0">Gestión y Mantenimiento de Equipos Médicos</p>
+    </div>
+
+    <!-- Cuerpo del Login -->
+    <div class="card-body p-4">
+        
+        <!-- Mensajes Flash de Error o Confirmación -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show border-0 shadow-sm small py-2" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close py-2" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <!-- Campo Usuario -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold text-dark small">Usuario</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <input type="text" class="form-control bg-light border-start-0" name="username" placeholder="Nombre de usuario" required autofocus>
+                </div>
+            </div>
+
+            <!-- Campo Contraseña -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold text-dark small">Contraseña</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input type="password" class="form-control bg-light border-start-0" name="password" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <!-- Botón Ingresar -->
+            <button type="submit" class="btn btn-login w-100 d-flex align-items-center justify-content-center gap-2 mb-4">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Ingresar al Sistema</span>
+            </button>
+        </form>
+
+        <!-- Bloque de Credenciales de Demostración -->
+        <div class="demo-credentials p-3">
+            <div class="d-flex align-items-center gap-2 text-dark fw-semibold small mb-2">
+                <i class="bi bi-info-circle-fill text-primary"></i>
+                <span>Usuarios de prueba:</span>
+            </div>
+            <div class="small text-muted font-monospace d-flex flex-column gap-1" style="font-size: 0.78rem;">
+                <div><strong class="text-dark">admin</strong> / admin123 <span class="text-secondary">(Administrador)</span></div>
+                <div><strong class="text-dark">supervisor</strong> / super123 <span class="text-secondary">(Supervisor)</span></div>
+                <div><strong class="text-dark">tecnico</strong> / tecnico123 <span class="text-secondary">(Técnico)</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página de la tarjeta -->
+    <div class="card-footer bg-white border-top-0 text-center pb-3">
+        <small class="text-muted" style="font-size: 0.75rem;">
+            Prototipo académico — Aseguramiento de la Calidad (UMG)
+        </small>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

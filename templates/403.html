@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Acceso denegado{% endblock %}
+{% block content %}
+<div class="alert alert-danger">
+  <h4>🔒 Acceso denegado (403)</h4>
+  <p>Su rol actual (<b>{{ session.rol }}</b>) no tiene permisos para acceder a este módulo. Esta restricción evidencia la aplicación del criterio de <b>Seguridad</b> de ISO/IEC 25010:2023: el control de acceso se basa en roles definidos.</p>
+  <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Volver al dashboard</a>
+</div>
+{% endblock %}
